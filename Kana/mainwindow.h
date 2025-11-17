@@ -4,10 +4,11 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
+namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+class KanaTablePage;
+class PracticePage;
 
 class MainWindow : public QMainWindow
 {
@@ -19,5 +20,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    KanaTablePage *kanaTablePage;
+    PracticePage *practicePage;
 };
+
 #endif // MAINWINDOW_H

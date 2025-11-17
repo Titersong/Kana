@@ -23,6 +23,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Kana
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        kanatablepage.cpp
+        kanatablepage.h
+        practicepage.h
+        practicepage.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Kana APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
