@@ -2,47 +2,57 @@
 #define KANATABLEPAGE_H
 
 #include <QWidget>
-#include <QJsonObject>
+#include <QVector>
 
 class QPushButton;
 class QScrollArea;
 class QVBoxLayout;
-class QFrame;
 
 class KanaTablePage : public QWidget
 {
     Q_OBJECT
+
 public:
     explicit KanaTablePage(QWidget *parent = nullptr);
 
-    QPushButton *btnHome;  // чтобы MainWindow мог подключаться
+signals:
+    void goHome();
 
 private:
-    // переключатели
+    // UI
+    QPushButton *btnHome;
     QPushButton *btnHiragana;
     QPushButton *btnKatakana;
 
-    // прокручиваемая область
     QScrollArea *scrollArea;
     QWidget     *scrollContent;
     QVBoxLayout *mainLayout;
 
-    // JSON база данных
-    QJsonObject kanaData;
+    // Static tables
+    QVector<QVector<QString>> hira_gojuon;
+    QVector<QVector<QString>> hira_dakuon;
+    QVector<QVector<QString>> hira_handakuon;
+    QVector<QVector<QString>> hira_yoon;
 
-    // Методы
+    QVector<QVector<QString>> kata_gojuon;
+    QVector<QVector<QString>> kata_dakuon;
+    QVector<QVector<QString>> kata_handakuon;
+    QVector<QVector<QString>> kata_yoon;
+
+    // Methods
     void buildUi();
-    void loadJson();
+    void loadStaticKana();
     void refreshTable();
 
-    QVector<QPair<QString,QString>>
-    getList(const QString &script, const QString &section);
-
     QWidget* createSection(const QString &title,
-                           const QVector<QPair<QString,QString>> &kanaList);
+                           const QVector<QVector<QString>> &matrix,
+                           int columns);
 
-    QWidget* createKanaCard(const QString &symbol,
-                            const QString &romaji);
+    QWidget* createCard(const QString &kana, const QString &romaji);
+
+    QString romajiOf(const QString &kana);
+
+    bool eventFilter(QObject *obj, QEvent *ev) override;
 };
 
 #endif // KANATABLEPAGE_H

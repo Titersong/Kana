@@ -26,9 +26,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnPractice, &QPushButton::clicked, this, [this]() {
         ui->stackedWidget->setCurrentWidget(practicePage);
     });
+
+    connect(kanaTablePage, &KanaTablePage::goHome,
+            this, &MainWindow::showHome);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::showHome()
+{
+    ui->stackedWidget->setCurrentIndex(0); // 0 — это HomePage
 }
