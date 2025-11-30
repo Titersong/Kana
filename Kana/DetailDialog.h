@@ -2,31 +2,52 @@
 #define DETAILDIALOG_H
 
 #include <QDialog>
+#include <QPixmap>
 
 class QLabel;
 class QPushButton;
 class QMediaPlayer;
+class QAudioOutput;
 
 class DetailDialog : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit DetailDialog(const QString &kana,
                           const QString &romaji,
+                          bool isHiragana,
                           QWidget *parent = nullptr);
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
+private slots:
+    void playSound();
+    void switchScript();   // ← ★ новая кнопка переключения
+
 private:
-    QLabel *lblKana;
-    QLabel *lblRomaji;
-    QPushButton *btnPlay;
-    QPushButton *btnClose;
-    QMediaPlayer *player;
-
-    QString soundName;
-
     void buildUi();
+    void loadContent();        // ← загрузка всего (звук+картинка)
     void loadSound();
+    void loadStrokeImage();
+    void updateStrokePixmap();
+
+    QString m_kana_hira;
+    QString m_kana_kata;
+    QString m_romaji;
+    bool    m_isHiragana;
+
+    QLabel       *lblKana;
+    QLabel       *lblScript;
+    QLabel       *lblRomaji;
+    QPushButton  *btnSound;
+    QPushButton  *btnSwitch;      // ← ★ кнопка переключения
+    QLabel       *strokeLabel;
+
+    QMediaPlayer *m_player = nullptr;
+    QAudioOutput *m_audio  = nullptr;
+
+    QPixmap       m_strokePixmap;
 };
 
-#endif // DETAILDIALOG_H
+#endif

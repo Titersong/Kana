@@ -293,7 +293,9 @@ QString KanaTablePage::romajiOf(const QString &k)
                                        {"ぱ","pa"},{"ぴ","pi"},{"ぷ","pu"},{"ぺ","pe"},{"ぽ","po"},
 
                                        {"きゃ","kya"},{"きゅ","kyu"},{"きょ","kyo"},
+                                       {"ぎゃ","gya"},{"ぎゅ","gyu"},{"ぎょ","gyo"},
                                        {"しゃ","sha"},{"しゅ","shu"},{"しょ","sho"},
+                                       {"じゃ","ja"},{"じゅ","ju"},{"じょ","jo"},
                                        {"ちゃ","cha"},{"ちゅ","chu"},{"ちょ","cho"},
                                        {"にゃ","nya"},{"にゅ","nyu"},{"にょ","nyo"},
                                        {"ひゃ","hya"},{"ひゅ","hyu"},{"ひょ","hyo"},
@@ -319,7 +321,9 @@ QString KanaTablePage::romajiOf(const QString &k)
                                        {"パ","pa"},{"ピ","pi"},{"プ","pu"},{"ペ","pe"},{"ポ","po"},
 
                                        {"キャ","kya"},{"キュ","kyu"},{"キョ","kyo"},
+                                       {"ギャ","gya"},{"ギュ","gyu"},{"ギョ","gyo"},
                                        {"シャ","sha"},{"シュ","shu"},{"ショ","sho"},
+                                       {"ジャ","ja"},{"ジュ","ju"},{"ジョ","jo"},
                                        {"チャ","cha"},{"チュ","chu"},{"チョ","cho"},
                                        {"ニャ","nya"},{"ニュ","nyu"},{"ニョ","nyo"},
                                        {"ヒャ","hya"},{"ヒュ","hyu"},{"ヒョ","hyo"},
@@ -339,12 +343,13 @@ bool KanaTablePage::eventFilter(QObject *obj, QEvent *ev)
         QWidget *w = qobject_cast<QWidget*>(obj);
         if (!w) return false;
 
-        QString kana = w->property("kana").toString();
-        QString rom  = w->property("romaji").toString();
+        QString kana   = w->property("kana").toString();
+        QString romaji = w->property("romaji").toString();
 
         if (!kana.isEmpty()) {
-            DetailDialog dlg(kana, rom, this);
-            dlg.exec();
+            bool isHira = btnHiragana->isChecked();
+            DetailDialog dlg(kana, romaji, isHira, this);
+            dlg.exec();          // закрытие диалога НЕ закроет приложение
         }
     }
     return false;
