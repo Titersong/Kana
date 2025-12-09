@@ -12,13 +12,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Создаём страницы
     kanaTablePage = new KanaTablePage(this);
-    practicePage = new PracticePage(this);
+    practicePage  = new PracticePage(this);
 
-    // Добавляем их в QStackedWidget
     ui->stackedWidget->addWidget(kanaTablePage);
     ui->stackedWidget->addWidget(practicePage);
 
-    // Реакции на кнопки
+    // кнопки на главной странице
     connect(ui->btnKanaTable, &QPushButton::clicked, this, [this]() {
         ui->stackedWidget->setCurrentWidget(kanaTablePage);
     });
@@ -27,8 +26,13 @@ MainWindow::MainWindow(QWidget *parent)
         ui->stackedWidget->setCurrentWidget(practicePage);
     });
 
-    connect(kanaTablePage, &KanaTablePage::goHome,
-            this, &MainWindow::showHome);
+    // возврат домой из страниц
+    connect(kanaTablePage,  &KanaTablePage::goHome, this, [this]() {
+        ui->stackedWidget->setCurrentWidget(ui->page);
+    });
+    connect(practicePage,  &PracticePage::goHome, this, [this]() {
+        ui->stackedWidget->setCurrentWidget(ui->page);
+    });
 }
 
 MainWindow::~MainWindow()

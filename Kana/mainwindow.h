@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "practicepage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,14 +19,14 @@ private slots:
     void showHome();
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
 
     KanaTablePage *kanaTablePage;
-    PracticePage *practicePage;
+    PracticePage  *practicePage;
 };
 
 #endif // MAINWINDOW_H
