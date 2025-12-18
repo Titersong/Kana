@@ -24,12 +24,21 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         kanatablepage.cpp
         kanatablepage.h
-        practicepage.h
-        practicepage.cpp
+
+
         DetailDialog.h
         DetailDialog.cpp
         progressmanager.h
         progressmanager.cpp
+        practiceconfig.h
+        practicesetuppage.h
+        practicesetuppage.cpp
+        practicesessionpage.h
+        practicesessionpage.cpp
+        StatisticsPage.h
+        StatisticsPage.cpp
+        homepage.h
+        homepage.cpp
 
     )
 # Define target properties for Android with Qt 6 as:

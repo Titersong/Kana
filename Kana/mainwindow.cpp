@@ -1,8 +1,11 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include "homepage.h"
 #include "kanatablepage.h"
-#include "practicepage.h"
+#include "practicesetuppage.h"
+#include "practicesessionpage.h"
+#include "statisticspage.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,37 +13,63 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Создаём страницы
-    kanaTablePage = new KanaTablePage(this);
-    practicePage  = new PracticePage(this);
+    // ---------- Pages ----------
+    auto *homePage = new HomePage(this);
+    auto *kanaTablePage = new KanaTablePage(this);
+    auto *practiceSetupPage = new PracticeSetupPage(this);
+    auto *practiceSessionPage = new PracticeSessionPage(this);
+    auto *statisticsPage = new StatisticsPage(this);
 
-    ui->stackedWidget->addWidget(kanaTablePage);
-    ui->stackedWidget->addWidget(practicePage);
+    auto *stack = ui->stackedWidget;
+    stack->addWidget(homePage);
+    stack->addWidget(kanaTablePage);
+    stack->addWidget(practiceSetupPage);
+    stack->addWidget(practiceSessionPage);
+    stack->addWidget(statisticsPage);
 
-    // кнопки на главной странице
-    connect(ui->btnKanaTable, &QPushButton::clicked, this, [this]() {
-        ui->stackedWidget->setCurrentWidget(kanaTablePage);
+    stack->setCurrentWidget(homePage);
+
+    // ---------- HOME ----------
+    connect(homePage, &HomePage::openKanaTable, this, [=]() {
+        stack->setCurrentWidget(kanaTablePage);
     });
 
-    connect(ui->btnPractice, &QPushButton::clicked, this, [this]() {
-        ui->stackedWidget->setCurrentWidget(practicePage);
+    connect(homePage, &HomePage::openPractice, this, [=]() {
+        stack->setCurrentWidget(practiceSetupPage);
     });
 
-    // возврат домой из страниц
-    connect(kanaTablePage,  &KanaTablePage::goHome, this, [this]() {
-        ui->stackedWidget->setCurrentWidget(ui->page);
+    connect(homePage, &HomePage::openStatistics, this, [=]() {
+        statisticsPage->loadStats();
+        stack->setCurrentWidget(statisticsPage);
     });
-    connect(practicePage,  &PracticePage::goHome, this, [this]() {
-        ui->stackedWidget->setCurrentWidget(ui->page);
+
+    // ---------- PRACTICE ----------
+    connect(practiceSetupPage, &PracticeSetupPage::startPractice,
+            this, [=](const PracticeConfig &config) {
+                practiceSessionPage->startSession(config);
+                stack->setCurrentWidget(practiceSessionPage);
+            });
+
+    connect(practiceSessionPage, &PracticeSessionPage::backToSetup,
+            this, [=]() {
+                stack->setCurrentWidget(practiceSetupPage);
+            });
+
+    // ---------- BACK TO HOME ----------
+    connect(kanaTablePage, &KanaTablePage::goHome, this, [=]() {
+        stack->setCurrentWidget(homePage);
+    });
+
+    connect(practiceSetupPage, &PracticeSetupPage::goHome, this, [=]() {
+        stack->setCurrentWidget(homePage);
+    });
+
+    connect(statisticsPage, &StatisticsPage::goHome, this, [=]() {
+        stack->setCurrentWidget(homePage);
     });
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::showHome()
-{
-    ui->stackedWidget->setCurrentIndex(0); // 0 — это HomePage
 }

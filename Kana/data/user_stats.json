@@ -1,20 +1,29 @@
 {
     "hiragana": {
-        "correct": 7,
+        "correct": 51,
         "mastered": [
+            "sha",
+            "ga",
+            "cha"
         ],
         "streak": 0,
-        "wrong": 17
+        "wrong": 43
     },
     "katakana": {
-        "correct": 1,
+        "correct": 48,
         "mastered": [
+            "ki",
+            "chu",
+            "nu",
+            "zu",
+            "da",
+            "ne"
         ],
-        "streak": 0,
-        "wrong": 1
+        "streak": 1,
+        "wrong": 38
     },
     "practice": {
-        "totalAnswered": 26,
-        "totalCorrect": 8
+        "totalAnswered": 55,
+        "totalCorrect": 25
     }
 }

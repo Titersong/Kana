@@ -10,25 +10,35 @@
 #include <QFile>
 #include <QDebug>
 #include <QResizeEvent>
+#include <QRegularExpression>
 
-// Convert hira → kata
-static QString toKatakana(const QString &h)
+// Deleting ()
+static QString displayRomaji(QString s)
 {
-    if (h.isEmpty()) return h;
-    ushort u = h[0].unicode();
-    if (u >= 0x3041 && u <= 0x3096)
-        return QString(QChar(u + 0x60));
-    return h;
+    s.remove(QRegularExpression(R"(\s*\([^)]*\))"));
+    return s.trimmed();
 }
 
-// Convert kata → hira
+static QString toKatakana(const QString &h)
+{
+    QString out = h;
+    for (int i = 0; i < out.size(); ++i) {
+        ushort u = out[i].unicode();
+        if (u >= 0x3041 && u <= 0x3096) // hira range
+            out[i] = QChar(u + 0x60);
+    }
+    return out;
+}
+
 static QString toHiragana(const QString &k)
 {
-    if (k.isEmpty()) return k;
-    ushort u = k[0].unicode();
-    if (u >= 0x30A1 && u <= 0x30F6)
-        return QString(QChar(u - 0x60));
-    return k;
+    QString out = k;
+    for (int i = 0; i < out.size(); ++i) {
+        ushort u = out[i].unicode();
+        if (u >= 0x30A1 && u <= 0x30F6) // kata range
+            out[i] = QChar(u - 0x60);
+    }
+    return out;
 }
 
 DetailDialog::DetailDialog(const QString &kana,
@@ -119,7 +129,7 @@ void DetailDialog::loadContent()
     // SET LABELS
     lblKana->setText(m_isHiragana ? m_kana_hira : m_kana_kata);
     lblScript->setText(m_isHiragana ? "Hiragana" : "Katakana");
-    lblRomaji->setText(m_romaji);
+    lblRomaji->setText(displayRomaji(m_romaji));
 
     loadSound();
     loadStrokeImage();
@@ -127,7 +137,7 @@ void DetailDialog::loadContent()
 
 void DetailDialog::loadSound()
 {
-    QString path = QString("data/sounds/%1.mp3").arg(m_romaji);
+    QString path = QString("data/sounds/%1.mp3").arg(displayRomaji(m_romaji));
 
     if (!QFile::exists(path)) {
         qDebug() << "NO SOUND:" << path;

@@ -17,7 +17,7 @@ public:
     int  getTotalAnswered() const;
     int  getTotalCorrect()  const;
     void addAnswered(bool correct);
-
+    void addPracticeAnswer(bool correct);
     // --- kana-specific stats ---
     void addCorrect(bool isHiragana);
     void addWrong(bool isHiragana);

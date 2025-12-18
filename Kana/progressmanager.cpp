@@ -121,6 +121,36 @@ void ProgressManager::addCorrect(bool isHiragana)
     save();
 }
 
+void ProgressManager::addPracticeAnswer(bool correct)
+{
+    QFile f("data/user_stats.json");
+    if (!f.open(QIODevice::ReadOnly))
+        return;
+
+    QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
+    f.close();
+
+    QJsonObject root = doc.object();
+    QJsonObject practice = root["practice"].toObject();
+
+    int totalAnswered = practice["totalAnswered"].toInt();
+    int totalCorrect  = practice["totalCorrect"].toInt();
+
+    totalAnswered++;
+    if (correct)
+        totalCorrect++;
+
+    practice["totalAnswered"] = totalAnswered;
+    practice["totalCorrect"]  = totalCorrect;
+    root["practice"] = practice;
+
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return;
+
+    f.write(QJsonDocument(root).toJson());
+    f.close();
+}
+
 void ProgressManager::addWrong(bool isHiragana)
 {
     QString key = isHiragana ? "hiragana" : "katakana";
