@@ -1,29 +1,27 @@
 {
-    "hiragana": {
-        "correct": 51,
-        "mastered": [
-            "sha",
-            "ga",
-            "cha"
-        ],
-        "streak": 0,
-        "wrong": 43
-    },
-    "katakana": {
-        "correct": 48,
-        "mastered": [
-            "ki",
-            "chu",
-            "nu",
-            "zu",
-            "da",
-            "ne"
-        ],
-        "streak": 1,
-        "wrong": 38
-    },
-    "practice": {
-        "totalAnswered": 55,
-        "totalCorrect": 25
+  "hiragana": {
+    "correct": 82,
+    "wrong": 93,
+    "streak": 0,
+    "mastered": [ "sha", "ga", "cha" ],
+    "symbolStreak": {
+      "ka": 2,
+      "shi": 1,
+      "cha": 3
     }
+  },
+  "katakana": {
+    "correct": 87,
+    "wrong": 99,
+    "streak": 0,
+    "mastered": [ "ki", "chu" ],
+    "symbolStreak": {
+      "ki": 3,
+      "ne": 1
+    }
+  },
+  "practice": {
+    "totalAnswered": 111,
+    "totalCorrect": 36
+  }
 }

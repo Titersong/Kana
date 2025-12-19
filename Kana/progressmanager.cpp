@@ -28,6 +28,8 @@ void ProgressManager::ensureDefaults()
         o["correct"]  = 0;
         o["wrong"]    = 0;
         o["streak"]   = 0;
+        if (!o.contains("symbolStreak"))
+            o["symbolStreak"] = QJsonObject();
         o["mastered"] = QJsonArray();
         data["hiragana"] = o;
     }
@@ -38,6 +40,8 @@ void ProgressManager::ensureDefaults()
         o["correct"]  = 0;
         o["wrong"]    = 0;
         o["streak"]   = 0;
+        if (!o.contains("symbolStreak"))
+            o["symbolStreak"] = QJsonObject();
         o["mastered"] = QJsonArray();
         data["katakana"] = o;
     }
@@ -115,36 +119,6 @@ void ProgressManager::addCorrect(bool isHiragana)
     save();
 }
 
-void ProgressManager::addPracticeAnswer(bool correct)
-{
-    QFile f("data/user_stats.json");
-    if (!f.open(QIODevice::ReadOnly))
-        return;
-
-    QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
-    f.close();
-
-    QJsonObject root = doc.object();
-    QJsonObject practice = root["practice"].toObject();
-
-    int totalAnswered = practice["totalAnswered"].toInt();
-    int totalCorrect  = practice["totalCorrect"].toInt();
-
-    totalAnswered++;
-    if (correct)
-        totalCorrect++;
-
-    practice["totalAnswered"] = totalAnswered;
-    practice["totalCorrect"]  = totalCorrect;
-    root["practice"] = practice;
-
-    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return;
-
-    f.write(QJsonDocument(root).toJson());
-    f.close();
-}
-
 void ProgressManager::addWrong(bool isHiragana)
 {
     QString key = isHiragana ? "hiragana" : "katakana";
@@ -201,4 +175,35 @@ QStringList ProgressManager::getMastered(bool isHiragana) const
     for (const auto &v : arr)
         list.append(v.toString());
     return list;
+}
+
+void ProgressManager::addSymbolAnswer(bool isHiragana, const QString &romaji, bool correct)
+{
+    QString key = isHiragana ? "hiragana" : "katakana";
+    QJsonObject block = data[key].toObject();
+
+    QJsonObject symbolStreak = block["symbolStreak"].toObject();
+    int streak = symbolStreak.value(romaji).toInt();
+
+    if (correct)
+        streak++;
+    else
+        streak = 0;
+
+    symbolStreak[romaji] = streak;
+    block["symbolStreak"] = symbolStreak;
+
+    const int MASTER_THRESHOLD = 3;
+
+    if (streak >= MASTER_THRESHOLD)
+    {
+        QJsonArray mastered = block["mastered"].toArray();
+        if (!mastered.contains(romaji))
+            mastered.append(romaji);
+
+        block["mastered"] = mastered;
+    }
+
+    data[key] = block;
+    save();
 }

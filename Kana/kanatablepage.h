@@ -2,7 +2,6 @@
 #define KANATABLEPAGE_H
 
 #include <QWidget>
-#include <QVector>
 
 class QPushButton;
 class QScrollArea;

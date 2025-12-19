@@ -31,6 +31,7 @@ private:
     QPushButton *btnSourceMastered;
     QPushButton *btnCount[4];
     QPushButton *btnStart;
+    QPushButton *btnHome;
 };
 
 #endif // PRACTICESETUPPAGE_H

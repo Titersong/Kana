@@ -26,6 +26,7 @@ public:
     int  getStreak(bool isHiragana) const;
 
     void markMastered(bool isHiragana, const QString &romaji);
+    void addSymbolAnswer(bool isHiragana, const QString &romaji, bool correct);
     QStringList getMastered(bool isHiragana) const;
 
 private:
