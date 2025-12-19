@@ -11,9 +11,6 @@
 #include "practiceconfig.h"
 #include "progressmanager.h"
 
-// --------------------------------------
-// Structure for single kana item
-// --------------------------------------
 struct QuizKanaItem
 {
     QString kana;
@@ -28,12 +25,10 @@ class PracticeSessionPage : public QWidget
 
 public:
     explicit PracticeSessionPage(QWidget *parent = nullptr);
-
-    // Запуск новой сессии с конфигом
     void startSession(const PracticeConfig &config);
 
 signals:
-    void backToSetup();  // возвращение в главное меню
+    void backToSetup();
 
 private slots:
     void answer(int index);
@@ -45,7 +40,7 @@ private:
     void buildUi();
     void finishSession();
     void stopSession();
-    // Логика теста
+    // Test logic
     void buildKanaPool();
     void askQuestion();
     QString romajiOf(const QString &kana);
@@ -55,8 +50,8 @@ private:
 private:
     PracticeConfig m_config;
 
-    QVector<QuizKanaItem> m_all;     // полный список
-    QVector<QuizKanaItem> m_pool;    // список с учётом выбранного режима
+    QVector<QuizKanaItem> m_all;
+    QVector<QuizKanaItem> m_pool;
 
     QuizKanaItem m_current;
 
@@ -68,7 +63,7 @@ private:
 
     ProgressManager *progress = nullptr;
 
-    // --- UI elements ---
+    // UI elements
     QPushButton *btnHome = nullptr;
 
     QLabel *lblCounter  = nullptr;
@@ -80,13 +75,13 @@ private:
 
     QPushButton *btnNext = nullptr;
 
-    // --- Finish screen ---
+    // Finish screen
     QWidget     *resultWidget = nullptr;
     QLabel      *lblResult = nullptr;
     QPushButton *btnBack = nullptr;
     QPushButton *btnStop = nullptr;
 
-    // --- Fade animation ---
+    // Fade animation
     QGraphicsOpacityEffect *opacity = nullptr;
     QPropertyAnimation     *fadeOut = nullptr;
     QPropertyAnimation     *fadeIn  = nullptr;

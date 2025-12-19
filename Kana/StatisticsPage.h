@@ -7,6 +7,7 @@ class QLabel;
 class QPushButton;
 class QVBoxLayout;
 class QHBoxLayout;
+class WordApiService;
 
 class StatisticsPage : public QWidget
 {
@@ -22,7 +23,7 @@ signals:
 private:
     void buildUi();
 
-    // helpers
+    // Helpers
     QWidget* createMasteredRow(const QStringList& romajiList, bool hiragana);
     QWidget* createMasteredCard(const QString& kana, const QString& romaji);
     QString  kanaFromRomaji(const QString& romaji, bool hiragana);
@@ -30,21 +31,29 @@ private:
 private:
     QVBoxLayout *rootLayout = nullptr;
 
-    // SUMMARY
+    // Summary
     QLabel *lblTotal;
     QLabel *lblAccuracy;
 
-    // HIRAGANA
+    // Hiragana
     QLabel *lblHiraCorrect;
     QLabel *lblHiraWrong;
     QLabel *lblHiraStreak;
     QWidget *hiraMasteredWidget;
 
-    // KATAKANA
+    // Katakana
     QLabel *lblKataCorrect;
     QLabel *lblKataWrong;
     QLabel *lblKataStreak;
     QWidget *kataMasteredWidget;
+
+    // API
+    QLabel *lblWordKana;
+    QLabel *lblWordRomaji;
+    QLabel *lblWordMeaning;
+    WordApiService *wordService;
+    QPushButton *btnNewWord;
+    QWidget *wordCard;
 
     QPushButton *btnHome;
 };

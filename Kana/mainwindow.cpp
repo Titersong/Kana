@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // ---------- Pages ----------
+    // Pages
     auto *homePage = new HomePage(this);
     auto *kanaTablePage = new KanaTablePage(this);
     auto *practiceSetupPage = new PracticeSetupPage(this);
@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     stack->setCurrentWidget(homePage);
 
-    // ---------- HOME ----------
+    // Home
     connect(homePage, &HomePage::openKanaTable, this, [=]() {
         stack->setCurrentWidget(kanaTablePage);
     });
@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
         stack->setCurrentWidget(statisticsPage);
     });
 
-    // ---------- PRACTICE ----------
+    // Practice
     connect(practiceSetupPage, &PracticeSetupPage::startPractice,
             this, [=](const PracticeConfig &config) {
                 practiceSessionPage->startSession(config);
@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
                 stack->setCurrentWidget(practiceSetupPage);
             });
 
-    // ---------- BACK TO HOME ----------
+    // Back to Home
     connect(kanaTablePage, &KanaTablePage::goHome, this, [=]() {
         stack->setCurrentWidget(homePage);
     });

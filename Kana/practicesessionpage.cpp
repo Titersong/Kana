@@ -60,7 +60,6 @@ static QString optionStyleWrong()
 }
 
 
-// ---------- Constructor ----------
 PracticeSessionPage::PracticeSessionPage(QWidget *parent)
     : QWidget(parent)
 {
@@ -70,7 +69,7 @@ PracticeSessionPage::PracticeSessionPage(QWidget *parent)
 }
 
 
-// ---------- Start Session ----------
+// Start Session
 void PracticeSessionPage::startSession(const PracticeConfig &config)
 {
     m_config = config;
@@ -82,13 +81,11 @@ void PracticeSessionPage::startSession(const PracticeConfig &config)
 
     for (const auto &it : m_all)
     {
-        // script filter
         if (m_config.script == PracticeConfig::Script::Hiragana && !it.isHiragana)
             continue;
         if (m_config.script == PracticeConfig::Script::Katakana && it.isHiragana)
             continue;
 
-        // ★ source filter
         if (m_config.source == PracticeConfig::Source::Mastered)
         {
             if (!m_masteredRomaji.contains(it.romaji))
@@ -132,14 +129,14 @@ void PracticeSessionPage::startSession(const PracticeConfig &config)
     askQuestion();
 }
 
-// ---------- UI ----------
+// UI
 void PracticeSessionPage::buildUi()
 {
     auto *root = new QVBoxLayout(this);
     root->setContentsMargins(16, 16, 16, 16);
     root->setSpacing(16);
 
-    // top bar
+    // Top bar
     auto *top = new QHBoxLayout();
     btnHome = new QPushButton("← Back");
     btnHome->setStyleSheet(
@@ -158,7 +155,7 @@ void PracticeSessionPage::buildUi()
 
     root->addLayout(top);
 
-    // question label
+    // Question label
     lblQuestion = new QLabel("...");
     QFont fq; fq.setPointSize(42); fq.setBold(true);
     lblQuestion->setFont(fq);
@@ -171,7 +168,7 @@ void PracticeSessionPage::buildUi()
     lblSubtitle->setStyleSheet("color:#bbbbbb; font-size:13pt;");
     root->addWidget(lblSubtitle);
 
-    // fade animation
+    // Fade animation
     opacity = new QGraphicsOpacityEffect(this);
     lblQuestion->setGraphicsEffect(opacity);
 
@@ -190,7 +187,7 @@ void PracticeSessionPage::buildUi()
         fadeIn->start();
     });
 
-    // grid of options
+    // Grid of options
     auto *grid = new QGridLayout();
     grid->setSpacing(16);
 
@@ -236,7 +233,7 @@ void PracticeSessionPage::buildUi()
 
     root->addWidget(btnStop);
 
-    // RESULT SCREEN
+    // Result screen
     resultWidget = new QWidget(this);
     auto *r = new QVBoxLayout(resultWidget);
 
@@ -263,7 +260,7 @@ void PracticeSessionPage::buildUi()
 }
 
 
-// ---------- Kana pool ----------
+// Kana pool
 void PracticeSessionPage::buildKanaPool()
 {
     m_all.clear();
@@ -279,8 +276,7 @@ void PracticeSessionPage::buildKanaPool()
             m_all.append(it);
     };
 
-    // matrices here (same as before)
-    // ---------------- Hiragana ----------------
+    // Hiragana
     const QVector<QVector<QString>> hira_gojuon = {
         {"あ","い","う","え","お"},
         {"か","き","く","け","こ"},
@@ -329,7 +325,7 @@ void PracticeSessionPage::buildKanaPool()
     addMatrix(hira_handakuon, true);
     addMatrix(hira_yoon, true);
 
-    // ---------------- Katakana ----------------
+    // Katakana
     const QVector<QVector<QString>> kata_gojuon = {
         {"ア","イ","ウ","エ","オ"},
         {"カ","キ","ク","ケ","コ"},
@@ -373,10 +369,11 @@ void PracticeSessionPage::buildKanaPool()
     addMatrix(kata_yoon, false);
 }
 
-// ---------- romajiOf ----------
+// romajiOf
 QString PracticeSessionPage::romajiOf(const QString &k)
 {
     static QMap<QString, QString> R = {
+        // Hiragana
         {"あ","a"},{"い","i"},{"う","u"},{"え","e"},{"お","o"},
         {"か","ka"},{"き","ki"},{"く","ku"},{"け","ke"},{"こ","ko"},
         {"さ","sa"},{"し","shi"},{"す","su"},{"せ","se"},{"そ","so"},
@@ -405,6 +402,7 @@ QString PracticeSessionPage::romajiOf(const QString &k)
         {"みゃ","mya"},{"みゅ","myu"},{"みょ","myo"},
         {"りゃ","rya"},{"りゅ","ryu"},{"りょ","ryo"},
 
+        // Katakana
         {"ア","a"},{"イ","i"},{"ウ","u"},{"エ","e"},{"オ","o"},
         {"カ","ka"},{"キ","ki"},{"ク","ku"},{"ケ","ke"},{"コ","ko"},
         {"サ","sa"},{"シ","shi"},{"ス","su"},{"セ","se"},{"ソ","so"},
@@ -436,7 +434,7 @@ QString PracticeSessionPage::romajiOf(const QString &k)
 
     return R.value(k, "");
 }
-// ---------- LOAD MASTERED ONLY ----------
+// Load mastered only
 void PracticeSessionPage::loadMasteredFromStats()
 {
     m_masteredRomaji.clear();
@@ -459,7 +457,7 @@ void PracticeSessionPage::loadMasteredFromStats()
     readBlock(obj["katakana"].toObject());
 }
 
-// ---------- ASK QUESTION ----------
+// Ask question
 void PracticeSessionPage::askQuestion()
 {
     if (m_config.questionLimit != -1 &&
@@ -479,12 +477,10 @@ void PracticeSessionPage::askQuestion()
     btnNext->setEnabled(false);
     lblFeedback->clear();
 
-    // ---------------- ВЫБОР ВОПРОСА ----------------
     m_current = m_pool[
         QRandomGenerator::global()->bounded(m_pool.size())
     ];
 
-    // режим
     if (m_config.mode == PracticeConfig::Mode::KanaToRomaji)
         m_showKana = true;
     else if (m_config.mode == PracticeConfig::Mode::RomajiToKana)
@@ -497,7 +493,6 @@ void PracticeSessionPage::askQuestion()
 
     QString correctText = m_showKana ? m_current.romaji : m_current.kana;
 
-    // ---------------- ПРАВИЛЬНЫЙ ИНДЕКС ----------------
     m_correctIndex = QRandomGenerator::global()->bounded(4);
 
     QSet<QString> usedKana;
@@ -508,7 +503,6 @@ void PracticeSessionPage::askQuestion()
 
     opt[m_correctIndex]->setText(correctText);
 
-    // ---------------- ФУНКЦИЯ ПОДБОРА ОШИБОЧНОГО ВАРИАНТА ----------------
     auto pickDistractor = [&](const QVector<QuizKanaItem> &source,
                               QuizKanaItem &out) -> bool
     {
@@ -536,7 +530,6 @@ void PracticeSessionPage::askQuestion()
         return false;
     };
 
-    // ---------------- ЗАПОЛНЕНИЕ ВАРИАНТОВ ----------------
     for (int i = 0; i < 4; ++i)
     {
         if (i == m_correctIndex)
@@ -545,10 +538,8 @@ void PracticeSessionPage::askQuestion()
         QuizKanaItem candidate;
         bool found = false;
 
-        // 1️⃣ сначала пытаемся взять из mastered
         found = pickDistractor(m_pool, candidate);
 
-        // 2️⃣ если не хватает — добираем из ВСЕХ символов
         if (!found)
             found = pickDistractor(m_all, candidate);
 
@@ -565,8 +556,6 @@ void PracticeSessionPage::askQuestion()
             m_showKana ? candidate.romaji : candidate.kana
             );
     }
-
-    // ---------------- ФИНАЛ ----------------
     m_active = true;
     m_questionIndex++;
 
@@ -581,7 +570,7 @@ void PracticeSessionPage::askQuestion()
 }
 
 
-// ---------- ANSWER ----------
+// Answer
 void PracticeSessionPage::answer(int index)
 {
     if (!m_active)
@@ -615,18 +604,18 @@ void PracticeSessionPage::answer(int index)
 }
 
 
-// ---------- NEXT ----------
+// Next
 void PracticeSessionPage::nextQuestion()
 {
     fadeOut->start();
 }
 
 
-// ---------- FINISH ----------
+// Finish
 void PracticeSessionPage::finishSession()
 {
-    btnHome->hide();       // удаляем лишнюю кнопку
-    lblFeedback->hide();   // убираем "Wrong"
+    btnHome->hide();
+    lblFeedback->hide();
     btnStop->hide();
 
     for (auto b : opt)
@@ -650,7 +639,6 @@ void PracticeSessionPage::stopSession()
     finishSession();
 }
 
-// ---------- EXIT ----------
 void PracticeSessionPage::exitSession()
 {
     emit backToSetup();

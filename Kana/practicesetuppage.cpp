@@ -5,7 +5,7 @@
 #include <QPushButton>
 #include <QLabel>
 
-// ---------- Styles ----------
+// Styles
 static QString toggleStyle(bool active)
 {
     return QString(
@@ -19,14 +19,14 @@ static QString toggleStyle(bool active)
                ).arg(active ? "#e68b0e" : "#333");
 }
 
-// --------------------------------
+
 PracticeSetupPage::PracticeSetupPage(QWidget *parent)
     : QWidget(parent)
 {
     buildUi();
 }
 
-// --------------------------------
+
 void PracticeSetupPage::buildUi()
 {
     auto *root = new QVBoxLayout(this);
@@ -49,13 +49,13 @@ void PracticeSetupPage::buildUi()
     homeRow->addStretch();
 
     root->addLayout(homeRow);
-    // ---- Title ----
+
     auto *title = new QLabel("Practice");
     title->setStyleSheet("color:white; font-size:26pt; font-weight:bold;");
     title->setAlignment(Qt::AlignCenter);
     root->addWidget(title);
 
-    // ---- MODE ----
+    // Mode
     auto *modeLabel = new QLabel("Mode");
     modeLabel->setStyleSheet("color:#aaa;");
     root->addWidget(modeLabel);
@@ -74,7 +74,7 @@ void PracticeSetupPage::buildUi()
     }
     root->addLayout(modeRow);
 
-    // ---- SCRIPT ----
+    // Script
     auto *scriptLabel = new QLabel("Script");
     scriptLabel->setStyleSheet("color:#aaa;");
     root->addWidget(scriptLabel);
@@ -93,7 +93,7 @@ void PracticeSetupPage::buildUi()
     }
     root->addLayout(scriptRow);
 
-    // ---- SOURCE ----
+    // Source
     auto *sourceLabel = new QLabel("Practice set");
     sourceLabel->setStyleSheet("color:#aaa;");
     root->addWidget(sourceLabel);
@@ -117,7 +117,7 @@ void PracticeSetupPage::buildUi()
         updateButtonStates();
     });
 
-    // ---- QUESTION COUNT ----
+    // Question count
     auto *countLabel = new QLabel("Questions");
     countLabel->setStyleSheet("color:#aaa;");
     root->addWidget(countLabel);
@@ -137,7 +137,7 @@ void PracticeSetupPage::buildUi()
     }
     root->addLayout(countRow);
 
-    // ---- START ----
+    // Start
     btnStart = new QPushButton("Start Practice");
     btnStart->setStyleSheet(
         "QPushButton { background:#e68b0e; color:black;"
@@ -154,7 +154,7 @@ void PracticeSetupPage::buildUi()
     updateButtonStates();
 }
 
-// --------------------------------
+
 void PracticeSetupPage::updateButtonStates()
 {
     for (int i = 0; i < 3; ++i)

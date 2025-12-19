@@ -21,10 +21,10 @@ private:
     void buildUi();
     void updateButtonStates();
 
-    // state
+    // State
     PracticeConfig m_config;
 
-    // buttons
+    // Buttons
     QPushButton *btnMode[3];
     QPushButton *btnScript[3];
     QPushButton *btnSourceAll;

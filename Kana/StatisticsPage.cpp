@@ -1,5 +1,5 @@
 #include "statisticspage.h"
-
+#include "wordapiservice.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -11,14 +11,14 @@
 #include <QJsonArray>
 #include <QMap>
 
-// ---------------- CONSTRUCTOR ----------------
+
 StatisticsPage::StatisticsPage(QWidget *parent)
     : QWidget(parent)
 {
     buildUi();
 }
 
-// ---------------- UI ----------------
+
 void StatisticsPage::buildUi()
 {
     auto *scroll = new QScrollArea(this);
@@ -37,7 +37,7 @@ void StatisticsPage::buildUi()
     pageLayout->addWidget(scroll);
     setLayout(pageLayout);
 
-    // ---------- TOP BAR ----------
+    // Top bar
     auto *top = new QHBoxLayout();
     btnHome = new QPushButton("← Home");
     btnHome->setStyleSheet(
@@ -51,13 +51,12 @@ void StatisticsPage::buildUi()
     top->addStretch();
     rootLayout->addLayout(top);
 
-    // ---------- TITLE ----------
     auto *title = new QLabel("Statistics");
     title->setAlignment(Qt::AlignCenter);
     title->setStyleSheet("color:white; font-size:30pt; font-weight:bold;");
     rootLayout->addWidget(title);
 
-    // ---------- SUMMARY ----------
+    // Summary
     auto *summaryTitle = new QLabel("Summary");
     summaryTitle->setStyleSheet("color:#f7a027; font-size:18pt; font-weight:bold;");
     rootLayout->addWidget(summaryTitle);
@@ -67,7 +66,7 @@ void StatisticsPage::buildUi()
     rootLayout->addWidget(lblTotal);
     rootLayout->addWidget(lblAccuracy);
 
-    // ---------- HIRAGANA ----------
+    // Hiragana
     auto *hiraTitle = new QLabel("Hiragana");
     hiraTitle->setStyleSheet("color:#ffaa00; font-size:18pt; font-weight:bold;");
     rootLayout->addWidget(hiraTitle);
@@ -82,7 +81,7 @@ void StatisticsPage::buildUi()
     rootLayout->addWidget(lblHiraStreak);
     rootLayout->addWidget(hiraMasteredWidget);
 
-    // ---------- KATAKANA ----------
+    // Katakana
     auto *kataTitle = new QLabel("Katakana");
     kataTitle->setStyleSheet("color:#4fc3f7; font-size:18pt; font-weight:bold;");
     rootLayout->addWidget(kataTitle);
@@ -99,6 +98,69 @@ void StatisticsPage::buildUi()
 
     rootLayout->addStretch();
 
+    // Word of the Day
+    auto *wordTitle = new QLabel("Word of the Day");
+    wordTitle->setStyleSheet("color:#8bc34a; font-size:18pt; font-weight:bold;");
+    rootLayout->addWidget(wordTitle);
+
+    // Card
+    wordCard = new QWidget();
+    auto *cardLayout = new QVBoxLayout(wordCard);
+    cardLayout->setSpacing(8);
+
+    lblWordKana = new QLabel("—");
+    lblWordKana->setAlignment(Qt::AlignCenter);
+    lblWordKana->setStyleSheet("font-size:36pt; color:white;");
+
+    lblWordRomaji = new QLabel();
+    lblWordRomaji->setAlignment(Qt::AlignCenter);
+    lblWordRomaji->setStyleSheet("font-size:14pt; color:#bbbbbb;");
+
+    lblWordMeaning = new QLabel();
+    lblWordMeaning->setAlignment(Qt::AlignCenter);
+    lblWordMeaning->setWordWrap(true);
+    lblWordMeaning->setStyleSheet("font-size:13pt;");
+
+    btnNewWord = new QPushButton("New word");
+    btnNewWord->setStyleSheet(
+        "QPushButton { background:#444; color:white; padding:6px 14px;"
+        "border-radius:8px; }"
+        "QPushButton:hover { background:#555; }"
+        );
+
+    cardLayout->addWidget(lblWordKana);
+    cardLayout->addWidget(lblWordRomaji);
+    cardLayout->addWidget(lblWordMeaning);
+    cardLayout->addSpacing(6);
+    cardLayout->addWidget(btnNewWord, 0, Qt::AlignCenter);
+
+    wordCard->setStyleSheet(
+        "background:#2b2b2b;"
+        "border-radius:16px;"
+        "padding:16px;"
+        );
+
+    rootLayout->addWidget(wordCard);
+
+    wordService = new WordApiService(this);
+
+    connect(wordService, &WordApiService::wordReady,
+            this, [this](const QString& kana,
+                   const QString& romaji,
+                   const QString& meaning)
+            {
+                lblWordKana->setText(kana);
+                lblWordRomaji->setText(romaji);
+                lblWordMeaning->setText(meaning);
+            });
+
+    connect(btnNewWord, &QPushButton::clicked, this, [this]() {
+        lblWordKana->setText("…");
+        lblWordRomaji->setText("");
+        lblWordMeaning->setText("Loading new word...");
+        wordService->fetchWord();
+    });
+
     for (auto *lbl : content->findChildren<QLabel*>())
     {
         if (lbl == title || lbl == summaryTitle || lbl == hiraTitle || lbl == kataTitle)
@@ -109,7 +171,7 @@ void StatisticsPage::buildUi()
     }
 }
 
-// ---------------- LOAD STATS ----------------
+// Load stats
 void StatisticsPage::loadStats()
 {
     QFile f("data/user_stats.json");
@@ -152,9 +214,10 @@ void StatisticsPage::loadStats()
     delete kataMasteredWidget->layout();
     auto *kataLayout = new QHBoxLayout(kataMasteredWidget);
     kataLayout->addWidget(createMasteredRow(km, false));
+    wordService->fetchWord();
 }
 
-// ---------------- MASTERED UI ----------------
+// Mastered situation
 QWidget* StatisticsPage::createMasteredRow(const QStringList& list, bool hira)
 {
     auto *row = new QWidget();
@@ -192,14 +255,11 @@ QWidget* StatisticsPage::createMasteredCard(const QString& kana, const QString& 
     return w;
 }
 
-// ---------------- ROMAJI → KANA ----------------
+// Romaji to Kana
 QString StatisticsPage::kanaFromRomaji(const QString& r, bool hira)
 {
-    // ВАЖНО: ключи должны совпадать с тем, что возвращает твой romajiOf()
-    // (например: "ji(di)", "zu(du)", "ja(chi)", "ju(chi)", "jo(chi)")
-
     static const QMap<QString, QString> H = {
-                                             // --- Hiragana gojuon ---
+                                             // Hiragana
                                              {"a","あ"},{"i","い"},{"u","う"},{"e","え"},{"o","お"},
                                              {"ka","か"},{"ki","き"},{"ku","く"},{"ke","け"},{"ko","こ"},
                                              {"sa","さ"},{"shi","し"},{"su","す"},{"se","せ"},{"so","そ"},
@@ -211,16 +271,13 @@ QString StatisticsPage::kanaFromRomaji(const QString& r, bool hira)
                                              {"ra","ら"},{"ri","り"},{"ru","る"},{"re","れ"},{"ro","ろ"},
                                              {"wa","わ"},{"wo","を"},{"n","ん"},
 
-                                             // --- Hiragana dakuon ---
                                              {"ga","が"},{"gi","ぎ"},{"gu","ぐ"},{"ge","げ"},{"go","ご"},
                                              {"za","ざ"},{"ji","じ"},{"zu","ず"},{"ze","ぜ"},{"zo","ぞ"},
                                              {"da","だ"},{"ji(di)","ぢ"},{"zu(du)","づ"},{"de","で"},{"do","ど"},
 
-                                             // --- Hiragana handakuon ---
                                              {"ba","ば"},{"bi","び"},{"bu","ぶ"},{"be","べ"},{"bo","ぼ"},
                                              {"pa","ぱ"},{"pi","ぴ"},{"pu","ぷ"},{"pe","ぺ"},{"po","ぽ"},
 
-                                             // --- Hiragana yoon ---
                                              {"kya","きゃ"},{"kyu","きゅ"},{"kyo","きょ"},
                                              {"gya","ぎゃ"},{"gyu","ぎゅ"},{"gyo","ぎょ"},
                                              {"sha","しゃ"},{"shu","しゅ"},{"sho","しょ"},
@@ -234,7 +291,7 @@ QString StatisticsPage::kanaFromRomaji(const QString& r, bool hira)
                                              };
 
     static const QMap<QString, QString> K = {
-                                             // --- Katakana gojuon ---
+                                             // Katakana
                                              {"a","ア"},{"i","イ"},{"u","ウ"},{"e","エ"},{"o","オ"},
                                              {"ka","カ"},{"ki","キ"},{"ku","ク"},{"ke","ケ"},{"ko","コ"},
                                              {"sa","サ"},{"shi","シ"},{"su","ス"},{"se","セ"},{"so","ソ"},
@@ -246,16 +303,13 @@ QString StatisticsPage::kanaFromRomaji(const QString& r, bool hira)
                                              {"ra","ラ"},{"ri","リ"},{"ru","ル"},{"re","レ"},{"ro","ロ"},
                                              {"wa","ワ"},{"wo","ヲ"},{"n","ン"},
 
-                                             // --- Katakana dakuon ---
                                              {"ga","ガ"},{"gi","ギ"},{"gu","グ"},{"ge","ゲ"},{"go","ゴ"},
                                              {"za","ザ"},{"ji","ジ"},{"zu","ズ"},{"ze","ゼ"},{"zo","ゾ"},
                                              {"da","ダ"},{"ji(di)","ヂ"},{"zu(du)","ヅ"},{"de","デ"},{"do","ド"},
 
-                                             // --- Katakana handakuon ---
                                              {"ba","バ"},{"bi","ビ"},{"bu","ブ"},{"be","ベ"},{"bo","ボ"},
                                              {"pa","パ"},{"pi","ピ"},{"pu","プ"},{"pe","ペ"},{"po","ポ"},
 
-                                             // --- Katakana yoon ---
                                              {"kya","キャ"},{"kyu","キュ"},{"kyo","キョ"},
                                              {"gya","ギャ"},{"gyu","ギュ"},{"gyo","ギョ"},
                                              {"sha","シャ"},{"shu","シュ"},{"sho","ショ"},

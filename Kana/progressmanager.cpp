@@ -11,9 +11,7 @@ ProgressManager::ProgressManager(QObject *parent)
     load();
 }
 
-// ---------------------------------------------------------
-//  Создаём дефолтные записи, если их нет в JSON
-// ---------------------------------------------------------
+// JSON creating
 void ProgressManager::ensureDefaults()
 {
     if (!data.contains("practice"))
@@ -45,9 +43,8 @@ void ProgressManager::ensureDefaults()
     }
 }
 
-// ---------------------------------------------------------
+
 //  Load JSON
-// ---------------------------------------------------------
 void ProgressManager::load()
 {
     QFile f(filePath);
@@ -67,9 +64,8 @@ void ProgressManager::load()
     ensureDefaults();
 }
 
-// ---------------------------------------------------------
-//  Save JSON
-// ---------------------------------------------------------
+
+// Save JSON
 void ProgressManager::save()
 {
     QFile f(filePath);
@@ -84,9 +80,8 @@ void ProgressManager::save()
     f.close();
 }
 
-// ---------------------------------------------------------
-// PRACTICE SECTION
-// ---------------------------------------------------------
+
+// Practice
 int ProgressManager::getTotalAnswered() const
 {
     return data["practice"].toObject()["totalAnswered"].toInt();
@@ -107,9 +102,8 @@ void ProgressManager::addAnswered(bool correct)
     save();
 }
 
-// ---------------------------------------------------------
+
 //  Kana counters
-// ---------------------------------------------------------
 void ProgressManager::addCorrect(bool isHiragana)
 {
     QString key = isHiragana ? "hiragana" : "katakana";
@@ -180,9 +174,8 @@ int ProgressManager::getStreak(bool isHiragana) const
     return data[key].toObject()["streak"].toInt();
 }
 
-// ---------------------------------------------------------
+
 //  Mastery
-// ---------------------------------------------------------
 void ProgressManager::markMastered(bool isHiragana, const QString &romaji)
 {
     QString key = isHiragana ? "hiragana" : "katakana";

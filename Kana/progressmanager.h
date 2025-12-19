@@ -13,12 +13,12 @@ public:
     void load();
     void save();
 
-    // --- practice global stats ---
+    // practice global stats
     int  getTotalAnswered() const;
     int  getTotalCorrect()  const;
     void addAnswered(bool correct);
     void addPracticeAnswer(bool correct);
-    // --- kana-specific stats ---
+    // kana-specific stats
     void addCorrect(bool isHiragana);
     void addWrong(bool isHiragana);
     int  getCorrect(bool isHiragana) const;

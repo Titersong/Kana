@@ -10,9 +10,7 @@
 #include <QMouseEvent>
 #include <QRegularExpression>
 
-// ----------------------------
-// Constructor
-// ----------------------------
+
 KanaTablePage::KanaTablePage(QWidget *parent)
     : QWidget(parent)
 {
@@ -21,19 +19,21 @@ KanaTablePage::KanaTablePage(QWidget *parent)
     refreshTable();
 }
 
-// ----------------------------
-// Build UI
-// ----------------------------
+
 void KanaTablePage::buildUi()
 {
     auto *root = new QVBoxLayout(this);
     root->setContentsMargins(16, 16, 16, 16);
 
-    // ==== Верхняя панель ====
+    // Top
     auto *topBar = new QHBoxLayout();
 
     btnHome = new QPushButton("← Home");
-    btnHome->setStyleSheet("padding:6px 14px; background:#444; color:white; border-radius:6px;");
+    btnHome->setStyleSheet(
+        "QPushButton { background:#333; color:white; padding:6px 14px;"
+        "border-radius:8px; }"
+        "QPushButton:hover { background:#444; }"
+        );
 
     btnHiragana = new QPushButton("Hiragana");
     btnKatakana = new QPushButton("Katakana");
@@ -71,7 +71,7 @@ void KanaTablePage::buildUi()
         refreshTable();
     });
 
-    // ==== Scroll ====
+    // Scroll
     scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -84,12 +84,11 @@ void KanaTablePage::buildUi()
     root->addWidget(scrollArea);
 }
 
-// ----------------------------
+
 // Static Kana Tables
-// ----------------------------
 void KanaTablePage::loadStaticKana()
 {
-    // ---- Hiragana ----
+    // Hiragana
     hira_gojuon = {
         {"あ","い","う","え","お"},
         {"か","き","く","け","こ"},
@@ -128,7 +127,7 @@ void KanaTablePage::loadStaticKana()
         {"りゃ","りゅ","りょ"}
     };
 
-    // ---- Katakana ----
+    // Katakana
     kata_gojuon = {
         {"ア","イ","ウ","エ","オ"},
         {"カ","キ","ク","ケ","コ"},
@@ -168,12 +167,10 @@ void KanaTablePage::loadStaticKana()
     };
 }
 
-// ----------------------------
+
 // Refresh table
-// ----------------------------
 void KanaTablePage::refreshTable()
 {
-    // Clear layout
     QLayoutItem *it;
     while ((it = mainLayout->takeAt(0))) {
         delete it->widget();
@@ -200,15 +197,15 @@ void KanaTablePage::refreshTable()
 
     mainLayout->addStretch();
 }
-// ----------------------------
+
+
 // Deleting ()
-// ----------------------------
 static QString displayRomaji(QString s)
 {
-    // удаляем любые "(...)" + лишние пробелы
     s.remove(QRegularExpression(R"(\s*\([^)]*\))"));
     return s.trimmed();
 }
+
 
 QWidget* KanaTablePage::createSection(const QString &title,
                                       const QVector<QVector<QString>> &matrix,
@@ -245,9 +242,8 @@ QWidget* KanaTablePage::createSection(const QString &title,
     return sec;
 }
 
-// ----------------------------
+
 // Create Card
-// ----------------------------
 QWidget* KanaTablePage::createCard(const QString &kana, const QString &romaji)
 {
     QWidget *card = new QWidget();
@@ -262,7 +258,7 @@ QWidget* KanaTablePage::createCard(const QString &kana, const QString &romaji)
     Lkana->setFont(f);
     Lkana->setAlignment(Qt::AlignCenter);
 
-    QLabel *Lrom = new QLabel(displayRomaji(romaji)); // ✅ показываем без скобок
+    QLabel *Lrom = new QLabel(displayRomaji(romaji));
     Lrom->setStyleSheet("color:#bbbbbb; font-size:11pt;");
     Lrom->setAlignment(Qt::AlignCenter);
 
@@ -273,17 +269,17 @@ QWidget* KanaTablePage::createCard(const QString &kana, const QString &romaji)
     card->installEventFilter(this);
 
     card->setProperty("kana", kana);
-    card->setProperty("romaji", romaji); // ✅ оригинал СО скобками (для файлов)
+    card->setProperty("romaji", romaji);
 
     return card;
 }
 
-// ----------------------------
+
 // Romaji dictionary
-// ----------------------------
 QString KanaTablePage::romajiOf(const QString &k)
 {
     static QMap<QString, QString> R = {
+                                        // Hiragana
                                         {"あ","a"},{"い","i"},{"う","u"},{"え","e"},{"お","o"},
                                         {"か","ka"},{"き","ki"},{"く","ku"},{"け","ke"},{"こ","ko"},
                                         {"さ","sa"},{"し","shi"},{"す","su"},{"せ","se"},{"そ","so"},
@@ -312,7 +308,7 @@ QString KanaTablePage::romajiOf(const QString &k)
                                         {"みゃ","mya"},{"みゅ","myu"},{"みょ","myo"},
                                         {"りゃ","rya"},{"りゅ","ryu"},{"りょ","ryo"},
 
-                                        // Katakana duplicates
+                                        // Katakana
                                         {"ア","a"},{"イ","i"},{"ウ","u"},{"エ","e"},{"オ","o"},
                                         {"カ","ka"},{"キ","ki"},{"ク","ku"},{"ケ","ke"},{"コ","ko"},
                                         {"サ","sa"},{"シ","shi"},{"ス","su"},{"セ","se"},{"ソ","so"},
@@ -345,9 +341,8 @@ QString KanaTablePage::romajiOf(const QString &k)
     return R.value(k, "");
 }
 
-// ----------------------------
+
 // Event filter
-// ----------------------------
 bool KanaTablePage::eventFilter(QObject *obj, QEvent *ev)
 {
     if (ev->type() == QEvent::MouseButtonRelease) {
@@ -360,7 +355,7 @@ bool KanaTablePage::eventFilter(QObject *obj, QEvent *ev)
         if (!kana.isEmpty()) {
             bool isHira = btnHiragana->isChecked();
             DetailDialog dlg(kana, romaji, isHira, this);
-            dlg.exec();          // закрытие диалога НЕ закроет приложение
+            dlg.exec();
         }
     }
     return false;

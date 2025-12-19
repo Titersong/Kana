@@ -23,11 +23,11 @@ protected:
 
 private slots:
     void playSound();
-    void switchScript();   // ← ★ новая кнопка переключения
+    void switchScript();
 
 private:
     void buildUi();
-    void loadContent();        // ← загрузка всего (звук+картинка)
+    void loadContent();
     void loadSound();
     void loadStrokeImage();
     void updateStrokePixmap();
@@ -41,7 +41,7 @@ private:
     QLabel       *lblScript;
     QLabel       *lblRomaji;
     QPushButton  *btnSound;
-    QPushButton  *btnSwitch;      // ← ★ кнопка переключения
+    QPushButton  *btnSwitch;
     QLabel       *strokeLabel;
 
     QMediaPlayer *m_player = nullptr;

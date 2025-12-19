@@ -24,7 +24,7 @@ static QString toKatakana(const QString &h)
     QString out = h;
     for (int i = 0; i < out.size(); ++i) {
         ushort u = out[i].unicode();
-        if (u >= 0x3041 && u <= 0x3096) // hira range
+        if (u >= 0x3041 && u <= 0x3096)
             out[i] = QChar(u + 0x60);
     }
     return out;
@@ -35,7 +35,7 @@ static QString toHiragana(const QString &k)
     QString out = k;
     for (int i = 0; i < out.size(); ++i) {
         ushort u = out[i].unicode();
-        if (u >= 0x30A1 && u <= 0x30F6) // kata range
+        if (u >= 0x30A1 && u <= 0x30F6)
             out[i] = QChar(u - 0x60);
     }
     return out;
@@ -49,12 +49,11 @@ DetailDialog::DetailDialog(const QString &kana,
     m_romaji(romaji),
     m_isHiragana(isHiragana)
 {
-    // формируем обе версии
     m_kana_hira = isHiragana ? kana : toHiragana(kana);
     m_kana_kata = toKatakana(m_kana_hira);
 
     setModal(true);
-    setWindowTitle("Kana");    // ← вернули крестик окна
+    setWindowTitle("Kana");
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     buildUi();
@@ -69,7 +68,7 @@ void DetailDialog::buildUi()
     root->setContentsMargins(24, 24, 24, 24);
     root->setSpacing(16);
 
-    // BIG SYMBOL
+    // big symbol
     lblKana = new QLabel();
     QFont fKana; fKana.setPointSize(64); fKana.setBold(true);
     lblKana->setFont(fKana);
@@ -77,13 +76,13 @@ void DetailDialog::buildUi()
     lblKana->setStyleSheet("color: white;");
     root->addWidget(lblKana);
 
-    // SCRIPT NAME
+    // Script name
     lblScript = new QLabel();
     lblScript->setAlignment(Qt::AlignHCenter);
     lblScript->setStyleSheet("color: #bbbbbb; font-size: 12pt;");
     root->addWidget(lblScript);
 
-    // ROMAJI
+    // Romaji
     lblRomaji = new QLabel();
     QFont fRom; fRom.setPointSize(22); fRom.setBold(true);
     lblRomaji->setFont(fRom);
@@ -91,7 +90,7 @@ void DetailDialog::buildUi()
     lblRomaji->setStyleSheet("color: white;");
     root->addWidget(lblRomaji);
 
-    // BUTTONS
+    // Buttons
     btnSound = new QPushButton("🔊");
     btnSound->setFixedSize(40,40);
     btnSound->setStyleSheet(
@@ -116,7 +115,7 @@ void DetailDialog::buildUi()
     connect(btnSound,  &QPushButton::clicked, this, &DetailDialog::playSound);
     connect(btnSwitch, &QPushButton::clicked, this, &DetailDialog::switchScript);
 
-    // STROKE IMAGE
+    // Stroke images
     strokeLabel = new QLabel();
     strokeLabel->setAlignment(Qt::AlignCenter);
     strokeLabel->setMinimumHeight(300);
@@ -126,7 +125,6 @@ void DetailDialog::buildUi()
 
 void DetailDialog::loadContent()
 {
-    // SET LABELS
     lblKana->setText(m_isHiragana ? m_kana_hira : m_kana_kata);
     lblScript->setText(m_isHiragana ? "Hiragana" : "Katakana");
     lblRomaji->setText(displayRomaji(m_romaji));

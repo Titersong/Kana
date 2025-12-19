@@ -17,7 +17,6 @@ void HomePage::buildUi()
     root->setSpacing(32);
     root->addStretch();
 
-    // ---------- TITLE ----------
     lblTitle = new QLabel("Kana");
     lblTitle->setAlignment(Qt::AlignCenter);
     lblTitle->setStyleSheet(
@@ -37,7 +36,6 @@ void HomePage::buildUi()
 
     root->addSpacing(40);
 
-    // ---------- BUTTON STYLE ----------
     auto btnStyle = QString(
         "QPushButton {"
         "  background:#2f2f2f;"
@@ -50,7 +48,6 @@ void HomePage::buildUi()
         "QPushButton:pressed { background:#f7a027; color:black; }"
         );
 
-    // ---------- BUTTONS ----------
     btnKana = new QPushButton("Kana Table");
     btnPractice = new QPushButton("Practice");
     btnStats = new QPushButton("Statistics");
@@ -64,7 +61,6 @@ void HomePage::buildUi()
 
     root->addStretch();
 
-    // ---------- SIGNALS ----------
     connect(btnKana, &QPushButton::clicked, this, &HomePage::openKanaTable);
     connect(btnPractice, &QPushButton::clicked, this, &HomePage::openPractice);
     connect(btnStats, &QPushButton::clicked, this, &HomePage::openStatistics);
